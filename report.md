@@ -32,16 +32,9 @@ LogisticRegression trains slower than the random forest because lbfgs hits
 the 1000-iteration limit on unscaled features.
 
 ## 4. Deployment fit
-(Paste the budget table here with Pass/Fail per criterion.)
-
-**logreg:** fits Cloud, Edge and Mobile. Its size (1.08 KB) and latency
-(0.30 ms) would satisfy TinyML, but the measured memory (~124 MiB, dominated
-by the Python runtime) is far above 256 KB, so it would need to be exported
-to a non-Python runtime (for example C) to run on TinyML.
-
-**random_forest:** fits Cloud and Edge. On Mobile it is borderline: 11.8 ms
-is under 20 ms on my laptop, but phone CPUs are slower. It does not fit
-TinyML (284 KB > 100 KB, 11.8 ms > 10 ms, memory far above 256 KB).
-
-Caveats: measurements are from a laptop, memory includes the Python runtime,
-and I treated each memory range as the memory available on that device class.
+| Target | Budget | logreg | random_forest |
+|---|---|---|---|
+| Cloud | mem ≥1 GB, ≤100 ms, ≤500 MB | Pass (124 MiB, 0.30 ms, 1.08 KB) | Pass (125 MiB, 11.8 ms, 284 KB) |
+| Edge | 256–1024 MB, ≤50 ms, ≤50 MB | Pass | Pass |
+| Mobile | 64–256 MB, ≤20 ms, ≤10 MB | Pass | Borderline (11.8 ms is under 20 ms, but with little margin on slower phone CPUs) |
+| TinyML | ≤256 KB, ≤10 ms, ≤100 KB | Fail on memory (~124 MiB); latency and size pass | Fail on all three (125 MiB, 11.8 ms, 284 KB) |
